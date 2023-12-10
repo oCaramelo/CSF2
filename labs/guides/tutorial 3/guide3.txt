@@ -1,0 +1,49 @@
+tar -xvzf able2.tar.gz -> extrair ficheiros de um .tar
+
+mmls able2.dd -> acesso à partition table do ficheiro
+
+fsstat -o 10260 able.dd -> fornece informação sobre o volume (aka file system) dentro da partition table
+
+fls -o 10260 able2.dd -> acesso ao ficheiros dentro do volume
+
+fls -o 10260 able2.dd <inodes> -> ver o content dos ficheiros do volume
+
+fls -o 10260 able2.dd -Frd able2.dd -> ver deleted files
+
+ffind -o 10260 -a able2.dd 2139 -> procurar pelo mesmo ficheiro no sistema utilizando o numero do inode. Pois apesar de serem cópias têm o mesmo inode. (-a ver tambem ficheiros deletados)
+
+istat -o 10260 able2.dd 2139 - obter mais informação sobre o inode (mesmo que fsstat só que para o inode)
+
+----------------------------------------------------
+
+icat -o 10260 able2.dd 2139 > lrkn.tgz.2139 - extrair dados do blocos referenciados pelo inodes
+
+tar -tzvf lrkn.tgz.2139 - ver o content dos dados que foram extraídos
+
+tar -xzvOf lrkn.tgz.2139 lrk3/README > lrkn.2139.README - extrair do content um ficheiro em especifico
+
+icat -o 10260 able2.dd 11108 | file - : (- é mesmo do comando) mostra o tipo de ficheiro do documento listado atráves do inode do documento
+
+icat -o 10260 able2.dd 11108 | display : exibe o ficheiro, i.e. se o ficheiro for uma imagem mostra a imagem.
+
+-----------------------------------------------------
+mmls able_3/able_3.000 : inspecionar split de uma image
+
+fls -o 104448 -r able_3/able_3.000: examinar conteudo de um split
+
+istat -o 104448 able_3.000 20: visitar inode
+
+icat -o 104448 able_3.000 20 | xxd | head -n 5: ver o hd do ficheiro (só funciona se o file estiver alocado, o icat deixa de funcionar porque não existem pointers para o ficheiro)
+
+Scalpel - Scalpel é um carver de sistema de ficheiros que lê um banco de dados de definições de cabeçalho e rodapé e extrai arquivos correspondentes ou fragmentos de dados de um conjunto de arquivos de imagem ou arquivos de dispositivo brutos.
+
+blkls -o 104448 able_3.000 > home.blkls: file carving para obter a directoria /home
+
+scalpel -c <scalpel_path + "scalpel.conf"> -o scalpel_out -O home.blkls: tentar extrair  ficheiro na directoria
+
+Chop - se atingiu um numero maximo de bytes carved antes de encontrar o footer
+
+The bitmap definition we added shows the scalpel.conf file can be easily improved on. Simply using xxd to find matching patterns in groups of files can be enough for you to build a decent library of headers, particularly if you come across many proprietary formats.
+
+foremost -t all -i able_3.000 
+https://www.systutorials.com/docs/linux/man/8-foremost/
